@@ -20,16 +20,37 @@ repositories {
 }
 
 dependencies {
-  implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
-  implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.1")
-  implementation("org.springframework.boot:spring-boot-starter-web:3.4.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
-  implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.0")
-  implementation("org.postgresql:postgresql:42.7.4")
-  compileOnly("org.projectlombok:lombok:1.18.36")
+  configurations.all {
+    exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    exclude(group = "commons-logging", module = "commons-logging")
+  }
 
+  constraints {
+    implementation("com.google.code.gson:gson:2.12.1")
+  }
+
+  implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+  implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.0")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
+
+  implementation("org.springframework.boot:spring-boot-starter-web:3.4.1")
+  implementation("org.postgresql:postgresql:42.7.4")
+
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.1")
+  implementation("org.springframework.boot:spring-boot-starter-validation:3.4.1")
+  implementation("org.springframework.boot:spring-boot-starter-log4j2:3.4.1")
+  implementation("org.springframework.boot:spring-boot-starter-aop:3.4.1")
+
+  implementation("org.springframework.boot:spring-boot-starter-security:3.4.1")
   implementation("org.springframework.security:spring-security-crypto:6.4.2")
   implementation("org.bouncycastle:bcprov-jdk18on:1.79")
+
+  implementation("com.google.api-client:google-api-client:2.7.1")
+  runtimeOnly("org.aspectj:aspectjweaver:1.9.22")
+
+  implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test:3.4.1")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.1.0")
@@ -49,35 +70,19 @@ allOpen {
 }
 
 tasks.register<Exec>("db-start") {
-  group = "db"
-  description = "Starts the database"
-
-  workingDir("${project.projectDir}/docker")
-  commandLine("docker-compose", "-f", "database.docker-compose.yaml", "up", "-d")
+  commandLine("docker", "compose", "-f", "./docker/database.docker-compose.yaml", "up", "-d")
 }
 
 tasks.register<Exec>("db-status") {
-  group = "db"
-  description = "Checks the status of the database"
-
-  workingDir("${project.projectDir}/docker")
-  commandLine("docker-compose", "-f", "database.docker-compose.yaml", "ps")
+  commandLine("docker", "compose", "-f", "./docker/database.docker-compose.yaml", "ps")
 }
 
 tasks.register<Exec>("db-stop") {
-  group = "db"
-  description = "Stops the database"
-
-  workingDir("${project.projectDir}/docker")
-  commandLine("docker-compose", "-f", "database.docker-compose.yaml", "down")
+  commandLine("docker", "compose", "-f", "./docker/database.docker-compose.yaml", "down")
 }
 
 tasks.register<Exec>("db-clean") {
-  group = "db"
-  description = "Cleans the database"
-
-  workingDir("${project.projectDir}/docker")
-  commandLine("docker-compose", "-f", "database.docker-compose.yaml", "down", "-v")
+  commandLine("docker", "compose", "-f", "./docker/database.docker-compose.yaml", "down", "-v")
 }
 
 tasks.withType<Test> {

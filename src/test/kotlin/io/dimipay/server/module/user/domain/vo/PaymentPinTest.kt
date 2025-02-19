@@ -1,8 +1,8 @@
 package io.dimipay.server.module.user.domain.vo
 
-import io.dimipay.server.module.user.domain.exception.PaymentPinConsecutiveNumberException
-import io.dimipay.server.module.user.domain.exception.PaymentPinFormatException
-import io.dimipay.server.module.user.domain.exception.PaymentPinSameNumberException
+import io.dimipay.server.module.user.exception.PaymentPinConsecutiveNumberException
+import io.dimipay.server.module.user.exception.PaymentPinFormatException
+import io.dimipay.server.module.user.exception.PaymentPinSameNumberException
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource

@@ -1,6 +1,6 @@
 package io.dimipay.server.module.user.domain.vo
 
-import io.dimipay.server.module.user.domain.exception.BiokeyException
+import io.dimipay.server.module.user.exception.BiokeyNotSetException
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.*
 
@@ -38,7 +38,7 @@ class BiokeyTest {
   fun testMatchesWithNull() {
     val biokey = Biokey(null)
 
-    assertThrows<BiokeyException> {
+    assertThrows<BiokeyNotSetException> {
       biokey.matches("e34ff064-7f79-44db-ae44-6422714ab616")
     }
   }

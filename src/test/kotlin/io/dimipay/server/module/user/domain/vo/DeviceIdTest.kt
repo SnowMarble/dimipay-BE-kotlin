@@ -1,6 +1,7 @@
 package io.dimipay.server.module.user.domain.vo
 
-import io.dimipay.server.module.user.domain.exception.DeviceIdException
+import io.dimipay.server.module.user.exception.DeviceIdException
+import io.dimipay.server.user.domain.model.user.DeviceId
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test

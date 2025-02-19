@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus
 open class ApiException(
     val statusCode: HttpStatus,
     message: String,
-    cause: Throwable? = null
-) : RuntimeException(message, cause)
+    val error: Any? = null,
+) : RuntimeException(message)
 
-open class BadRequestException(message: String, cause: Throwable? = null) : ApiException(HttpStatus.BAD_REQUEST, message, cause)
+open class BadRequestException(message: String, error: Any? = null) : ApiException(HttpStatus.BAD_REQUEST, message, error)
+open class UnauthorizedException(message: String, error: Any? = null) : ApiException(HttpStatus.UNAUTHORIZED, message, error)
+open class NotFoundException(message: String, error: Any? = null) : ApiException(HttpStatus.NOT_FOUND, message, error)

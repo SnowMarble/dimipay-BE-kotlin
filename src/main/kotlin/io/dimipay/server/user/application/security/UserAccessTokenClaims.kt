@@ -1,12 +1,12 @@
-package io.dimipay.server.user.domain.model.user
+package io.dimipay.server.user.application.security
 
 import io.dimipay.server.auth.application.security.ClientType
 import io.dimipay.server.auth.application.security.JwtClaims
 import io.dimipay.server.auth.application.security.JwtType
 
-data class UserAccessTokenClaims(
+class UserAccessTokenClaims(
     override val sub: String,
-    val onboarding: Boolean
+    private val onboarding: Boolean,
 ) : JwtClaims {
 
   override val type = JwtType.ACCESS

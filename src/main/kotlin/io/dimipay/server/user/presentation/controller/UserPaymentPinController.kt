@@ -1,16 +1,15 @@
 package io.dimipay.server.user.presentation.controller
 
 import io.dimipay.server.auth.application.annotation.ValidateJwt
-import io.dimipay.server.user.application.security.PaymentPinJwtClaims
-import io.dimipay.server.user.application.security.annotation.AllowOnboarding
 import io.dimipay.server.user.application.security.annotation.CurrentUser
+import io.dimipay.server.user.application.security.annotation.UserAuth
 import io.dimipay.server.user.application.service.PaymentPinService
 import io.dimipay.server.user.domain.model.user.User
 import io.dimipay.server.user.presentation.constant.JwtHeaders
-import io.dimipay.server.user.presentation.dto.PaymentPinRegisterRequestDto
-import io.dimipay.server.user.presentation.dto.PaymentPinRegisterResponseDto
-import io.dimipay.server.user.presentation.dto.PaymentPinVerifyRequestDto
-import io.dimipay.server.user.presentation.dto.PaymentPinVerifyResponseDto
+import io.dimipay.server.user.presentation.dto.request.PaymentPinRegisterRequestDto
+import io.dimipay.server.user.presentation.dto.request.PaymentPinVerifyRequestDto
+import io.dimipay.server.user.presentation.dto.response.PaymentPinRegisterResponseDto
+import io.dimipay.server.user.presentation.dto.response.PaymentPinVerifyResponseDto
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +19,7 @@ class UserPaymentPinController(
     private val paymentPinService: PaymentPinService
 ) {
 
-  @AllowOnboarding
+  @UserAuth(allowOnboarding = true)
   @PostMapping(UserEndpoints.PAYMENT_PIN)
   fun register(
       @CurrentUser user: User,
@@ -30,8 +29,9 @@ class UserPaymentPinController(
     return PaymentPinRegisterResponseDto(paymentPinJwt)
   }
 
+  @UserAuth
   @PatchMapping(UserEndpoints.PAYMENT_PIN)
-  @ValidateJwt(JwtHeaders.PAYMENT_PIN_AUTH, PaymentPinJwtClaims::class)
+  @ValidateJwt(JwtHeaders.PAYMENT_PIN_AUTH)
   fun update(
       @CurrentUser user: User,
       @Valid @RequestBody body: PaymentPinRegisterRequestDto
@@ -39,6 +39,7 @@ class UserPaymentPinController(
     paymentPinService.update(user, body.pin)
   }
 
+  @UserAuth(allowOnboarding = true)
   @PostMapping(UserEndpoints.PAYMENT_PIN_VERIFY)
   fun verify(
       @CurrentUser user: User,

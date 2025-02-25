@@ -7,7 +7,8 @@ import jakarta.persistence.Embeddable
 import jakarta.persistence.FetchType
 
 @Embeddable
-data class RefreshToken(
+@ConsistentCopyVisibility
+data class RefreshToken private constructor(
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "refresh_token", nullable = true)
     val refreshToken: String?

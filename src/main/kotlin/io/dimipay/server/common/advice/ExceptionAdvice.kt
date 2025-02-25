@@ -1,14 +1,15 @@
 package io.dimipay.server.common.advice
 
 import io.dimipay.server.common.dto.ResponseDto
-import io.dimipay.server.common.exception.ApiException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authorization.AuthorizationDeniedException
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.ErrorResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.server.ResponseStatusException
 
 @ControllerAdvice
 class ExceptionAdvice {
@@ -17,25 +18,38 @@ class ExceptionAdvice {
 
   private val defaultErrorCode = "INTERNAL_SERVER_ERROR"
 
-  @ExceptionHandler(AuthorizationDeniedException::class)
-  fun handleAuthorizationException(ex: AuthorizationDeniedException): ResponseEntity<ResponseDto<*>> {
+  @ExceptionHandler(AuthenticationException::class)
+  fun handleAuthenticationException(ex: AuthenticationException): ResponseEntity<ResponseDto<*>> {
+    val errorCode = classNameToErrorCode(ex::class.simpleName as String)
     val responseDto = ResponseDto(
         HttpStatus.FORBIDDEN.value(),
-        "Forbidden",
+        errorCode,
+        ex.message,
+        null
+    )
+    return ResponseEntity(responseDto, HttpStatus.UNAUTHORIZED)
+  }
+
+  @ExceptionHandler(AccessDeniedException::class)
+  fun handleAuthorizationException(ex: AccessDeniedException): ResponseEntity<ResponseDto<*>> {
+    val errorCode = classNameToErrorCode(ex::class.simpleName as String)
+    val responseDto = ResponseDto(
+        HttpStatus.FORBIDDEN.value(),
+        errorCode,
         ex.message,
         null
     )
     return ResponseEntity(responseDto, HttpStatus.FORBIDDEN)
   }
 
-  @ExceptionHandler(ApiException::class)
-  fun handleApiException(ex: ApiException): ResponseEntity<ResponseDto<*>> {
+  @ExceptionHandler(ResponseStatusException::class)
+  fun handleApiException(ex: ResponseStatusException): ResponseEntity<ResponseDto<*>> {
     val errorCode = classNameToErrorCode(ex::class.simpleName as String)
     val responseDto = ResponseDto(
         ex.statusCode.value(),
         errorCode,
         ex.message,
-        ex.error
+        null
     )
     return ResponseEntity(responseDto, ex.statusCode)
   }
@@ -52,6 +66,8 @@ class ExceptionAdvice {
       )
       return ResponseEntity(responseDto, ex.statusCode)
     }
+
+    println(ex.message)
 
     val responseDto = ResponseDto(
         HttpStatus.INTERNAL_SERVER_ERROR.value(),

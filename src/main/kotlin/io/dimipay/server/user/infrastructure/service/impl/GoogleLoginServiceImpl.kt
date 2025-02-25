@@ -1,12 +1,12 @@
-package io.dimipay.server.user.infrastructure.service.googleLoginServiceImpl
+package io.dimipay.server.user.infrastructure.service.impl
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import io.dimipay.server.auth.application.security.JwtService
 import io.dimipay.server.common.exception.BadRequestException
+import io.dimipay.server.user.application.security.UserAccessTokenClaims
 import io.dimipay.server.user.application.service.GoogleLoginService
 import io.dimipay.server.user.domain.model.user.User
-import io.dimipay.server.user.domain.model.user.UserAccessTokenClaims
 import io.dimipay.server.user.domain.model.user.UserName
 import io.dimipay.server.user.domain.repository.UserRepository
 import jakarta.transaction.Transactional

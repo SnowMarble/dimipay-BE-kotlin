@@ -6,14 +6,16 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 
 @Embeddable
-data class DeviceId(
+@ConsistentCopyVisibility
+data class DeviceId private constructor(
     @Column(name = "device_id", nullable = true)
-    final var deviceId: String?
+    var deviceId: String?
 ) {
 
-  init {
-    if (deviceId != null) {
-      this.deviceId = Argon2.encode(deviceId!!)
+  companion object {
+
+    fun create(deviceId: String): DeviceId {
+      return DeviceId(Argon2.encode(deviceId))
     }
   }
 

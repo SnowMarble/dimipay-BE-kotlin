@@ -1,4 +1,4 @@
-package io.dimipay.server.user.presentation.dto
+package io.dimipay.server.user.presentation.dto.request
 
 import io.dimipay.server.common.validation.annotation.ValidEnum
 import jakarta.validation.constraints.NotEmpty

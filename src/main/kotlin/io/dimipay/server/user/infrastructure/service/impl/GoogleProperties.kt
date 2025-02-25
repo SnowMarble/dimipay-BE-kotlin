@@ -1,4 +1,4 @@
-package io.dimipay.server.user.infrastructure.service.googleLoginServiceImpl
+package io.dimipay.server.user.infrastructure.service.impl
 
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport

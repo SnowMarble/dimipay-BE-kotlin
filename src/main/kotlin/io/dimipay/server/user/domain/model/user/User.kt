@@ -24,10 +24,10 @@ class User private constructor(
     val disabled: Boolean = false,
 
     @Embedded
-    val biokey: Biokey? = null,
+    var biokey: Biokey? = null,
 
     @Embedded
-    val deviceId: DeviceId? = null,
+    var deviceId: DeviceId? = null,
 
     @Embedded
     var paymentPin: PaymentPin? = null,
@@ -36,7 +36,7 @@ class User private constructor(
     val pinTryCount: Int = 0,
 
     @Embedded
-    val refreshToken: RefreshToken? = null,
+    var refreshToken: RefreshToken? = null,
 
     @Column(name = "google_id")
     val googleId: String,

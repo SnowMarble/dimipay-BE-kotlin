@@ -6,14 +6,16 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 
 @Embeddable
-data class Biokey(
+@ConsistentCopyVisibility
+data class Biokey private constructor(
     @Column(name = "biokey", nullable = true)
-    final var biokey: String?
+    var biokey: String?
 ) {
 
-  init {
-    if (biokey != null) {
-      this.biokey = Argon2.encode(biokey!!)
+  companion object {
+
+    fun create(biokey: String): Biokey {
+      return Biokey(Argon2.encode(biokey))
     }
   }
 

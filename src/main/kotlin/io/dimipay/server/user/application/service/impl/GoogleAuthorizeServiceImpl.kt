@@ -4,7 +4,7 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest
 import io.dimipay.server.user.application.service.GoogleAuthorizeService
-import io.dimipay.server.user.infrastructure.service.googleLoginServiceImpl.GoogleProperties
+import io.dimipay.server.user.infrastructure.service.impl.GoogleProperties
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service

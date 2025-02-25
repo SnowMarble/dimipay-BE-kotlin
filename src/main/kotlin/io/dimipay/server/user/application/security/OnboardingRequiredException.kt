@@ -1,5 +1,5 @@
 package io.dimipay.server.user.application.security
 
-import org.springframework.security.access.AccessDeniedException
+import io.dimipay.server.common.exception.ForbiddenException
 
-class OnboardingRequiredException : AccessDeniedException("Onboarding is required")
+class OnboardingRequiredException : ForbiddenException("Onboarding required")

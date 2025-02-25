@@ -3,6 +3,7 @@ package io.dimipay.server.auth.application.security
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class JwtAuthenticationProvider(
@@ -24,12 +25,16 @@ class JwtAuthenticationProvider(
       return null
     }
 
-    val role = SimpleGrantedAuthority("ROLE_${(claims["client"] as String).uppercase()}")
+    val authorities = mutableListOf<GrantedAuthority>()
+
+    val client = (claims["client"] as String).uppercase()
+    val role = SimpleGrantedAuthority("ROLE_$client")
+    authorities.add(role)
 
     val authenticationToken = JwtAuthenticationToken(
         authenticationRequest.credentials,
         (claims["sub"] as String).toLong(),
-        listOf(role),
+        authorities,
         claims
     )
 

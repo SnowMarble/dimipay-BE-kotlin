@@ -1,6 +1,5 @@
 package io.dimipay.server.user.presentation.controller
 
-import io.dimipay.server.auth.application.annotation.Public
 import io.dimipay.server.user.application.service.GoogleAuthorizeService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Profile
@@ -19,13 +18,11 @@ class GoogleAuthorizationController(
     private val googleAuthorizeService: GoogleAuthorizeService,
 ) {
 
-  @Public
   @GetMapping(UserEndpoints.OAUTH2_AUTHORIZE_GOOGLE)
   fun getAuthorizationUrl(): RedirectView {
     return RedirectView(googleAuthorizeService.getAuthorizationUrl())
   }
 
-  @Public
   @GetMapping(UserEndpoints.OAUTH2_CODE_GOOGLE)
   fun getIdToken(request: HttpServletRequest): String {
     return googleAuthorizeService.getIdToken(request)

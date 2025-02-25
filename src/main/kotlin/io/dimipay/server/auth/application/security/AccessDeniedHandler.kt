@@ -21,7 +21,7 @@ class AccessDeniedHandler(
   ) {
     response.contentType = MediaType.APPLICATION_JSON_VALUE
     response.status = HttpServletResponse.SC_FORBIDDEN
-    
+
     val errorResponse = ResponseDto<Any>(403, "Forbidden", accessDeniedException.message)
 
     objectMapper.writeValue(response.outputStream, errorResponse)

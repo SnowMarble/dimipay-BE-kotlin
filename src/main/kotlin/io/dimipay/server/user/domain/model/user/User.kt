@@ -3,6 +3,7 @@ package io.dimipay.server.user.domain.model.user
 import io.dimipay.server.auth.domain.vo.RefreshToken
 import io.dimipay.server.common.domain.BaseEntity
 import io.dimipay.server.user.exception.OrganizationDomainNotAllowedException
+import io.dimipay.server.user.exception.PaymentPinException
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -30,7 +31,7 @@ class User private constructor(
     var deviceId: DeviceId? = null,
 
     @Embedded
-    var paymentPin: PaymentPin? = null,
+    var paymentPinInternal: PaymentPin = PaymentPin.NULL,
 
     @Column(name = "pin_try_count")
     val pinTryCount: Int = 0,
@@ -42,6 +43,12 @@ class User private constructor(
     val googleId: String,
 ) : BaseEntity() {
 
+  /**
+   * Since factory methdods are used, I have to hide setter of the paymentPin. To do this, I can use a backing property.
+   */
+  val paymentPin: PaymentPin
+    get() = paymentPinInternal
+
   companion object {
 
     private const val ORGANIZATION_DOMAIN = "dimigo.hs.kr"
@@ -51,5 +58,25 @@ class User private constructor(
 
       return User(name = name, email = email, profileImage = profileImage, googleId = googleId)
     }
+  }
+
+  /**
+   * This is a factory method of the payment pin.
+   */
+  fun setPaymentPin(raw: String) {
+    if (!paymentPinInternal.isNullObject()) {
+      throw PaymentPinException.PaymentPinAlreadySetException()
+    }
+    paymentPinInternal = PaymentPin.create(raw)
+  }
+
+  /**
+   * This is another factory method of the payment pin.
+   */
+  fun updatePaymentPin(raw: String) {
+    if (paymentPinInternal.isNullObject()) {
+      throw PaymentPinException.PaymentPinNotSetException()
+    }
+    paymentPinInternal = PaymentPin.create(raw)
   }
 }

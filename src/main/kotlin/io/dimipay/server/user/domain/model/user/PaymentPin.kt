@@ -16,16 +16,10 @@ import jakarta.persistence.Embeddable
 data class PaymentPin private constructor(
 
     @Column(name = "payment_pin", nullable = true)
-    val paymentPin: String?
+    val paymentPin: String
 ) {
 
   companion object {
-
-    private val nullyPaymentPin = PaymentPin(null)
-
-    fun create(): PaymentPin {
-      return nullyPaymentPin
-    }
 
     fun create(raw: String): PaymentPin {
       checkFormat(raw)
@@ -62,16 +56,22 @@ data class PaymentPin private constructor(
         throw PaymentPinException.PaymentPinConsecutiveNumberException()
       }
     }
-  }
 
-  fun matches(raw: String): Boolean {
-    if (this.paymentPin == null) {
-      throw PaymentPinException.PaymentPinNotSetException()
+    /**
+     * This is a null object.
+     * @link https://refactoring.guru/introduce-null-object
+     */
+    val NULL = object : PaymentPin("") {
+
+      override fun verify(raw: String): Boolean {
+        throw PaymentPinException.PaymentPinNotSetException()
+      }
     }
-    return Argon2.matches(raw, this.paymentPin!!)
   }
 
-  fun isNull(): Boolean {
-    return paymentPin == null
+  fun verify(raw: String): Boolean {
+    return Argon2.matches(raw, this.paymentPin)
   }
+
+  fun isNullObject(): Boolean = this == NULL
 }

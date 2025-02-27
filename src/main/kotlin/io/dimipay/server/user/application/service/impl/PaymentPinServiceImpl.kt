@@ -3,7 +3,6 @@ package io.dimipay.server.user.application.service.impl
 import io.dimipay.server.auth.application.security.JwtService
 import io.dimipay.server.user.application.security.PaymentPinJwtClaims
 import io.dimipay.server.user.application.service.PaymentPinService
-import io.dimipay.server.user.domain.model.user.PaymentPin
 import io.dimipay.server.user.domain.model.user.User
 import io.dimipay.server.user.domain.repository.UserRepository
 import io.dimipay.server.user.exception.PaymentPinException
@@ -16,11 +15,7 @@ class PaymentPinServiceImpl(
 ) : PaymentPinService {
 
   override fun register(user: User, pin: String): String {
-    if (user.paymentPin != null) {
-      throw PaymentPinException.PaymentPinAlreadySetException()
-    }
-
-    user.paymentPin = PaymentPin.create(pin)
+    user.setPaymentPin(pin)
 
     userRepository.save(user)
 
@@ -28,12 +23,18 @@ class PaymentPinServiceImpl(
   }
 
   override fun update(user: User, newPin: String) {
-    user.paymentPin = PaymentPin.create(newPin)
+    user.updatePaymentPin(newPin)
 
     userRepository.save(user)
   }
 
   override fun verify(user: User, pin: String): String {
+    val isValid = user.paymentPin.verify(pin)
+
+    if (!isValid) {
+      throw PaymentPinException.InvalidPaymentPinException()
+    }
+
     return generatePinAuthJwt(user.id)
   }
 

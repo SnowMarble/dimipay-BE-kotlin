@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.view.RedirectView
 
-/**
- * Google OAuth2 Authorization Controllers. This for development only.
- */
 @Profile("dev")
 @RestController
 @RequestMapping

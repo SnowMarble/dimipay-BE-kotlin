@@ -15,4 +15,6 @@ sealed class PaymentPinException(message: String) : BadRequestException(message)
   class PaymentPinAlreadySetException : BadRequestException("결제 비밀번호가 이미 설정되어 있어요.")
 
   class InvalidPaymentPinException : BadRequestException("결제 비밀번호가 올바르지 않았어요.")
+
+  class PaymentPinTryCountLimitException : BadRequestException("결제 비밀번호 시도 횟수가 초과되었어요.")
 }

@@ -5,7 +5,7 @@ import io.dimipay.server.user.application.security.PaymentPinJwtClaims
 import io.dimipay.server.user.application.service.PaymentPinService
 import io.dimipay.server.user.domain.model.user.User
 import io.dimipay.server.user.domain.repository.UserRepository
-import io.dimipay.server.user.exception.PaymentPinException
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,6 +14,7 @@ class PaymentPinServiceImpl(
     private val jwtService: JwtService
 ) : PaymentPinService {
 
+  @Transactional
   override fun register(user: User, pin: String): String {
     user.setPaymentPin(pin)
 
@@ -22,18 +23,18 @@ class PaymentPinServiceImpl(
     return generatePinAuthJwt(user.id)
   }
 
+  @Transactional
   override fun update(user: User, newPin: String) {
     user.updatePaymentPin(newPin)
 
     userRepository.save(user)
   }
 
+  @Transactional
   override fun verify(user: User, pin: String): String {
-    val isValid = user.paymentPin.verify(pin)
+    user.verifyPaymentPin(pin)
 
-    if (!isValid) {
-      throw PaymentPinException.InvalidPaymentPinException()
-    }
+    userRepository.save(user)
 
     return generatePinAuthJwt(user.id)
   }

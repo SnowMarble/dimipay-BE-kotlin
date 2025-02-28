@@ -31,10 +31,10 @@ class User private constructor(
     var deviceId: DeviceId? = null,
 
     @Embedded
-    var paymentPinInternal: PaymentPin = PaymentPin.NULL,
+    private var paymentPin: PaymentPin = PaymentPin.NULL,
 
     @Column(name = "pin_try_count")
-    val pinTryCount: Int = 0,
+    var pinTryCount: Int = 0,
 
     @Embedded
     var refreshToken: RefreshToken? = null,
@@ -43,15 +43,11 @@ class User private constructor(
     val googleId: String,
 ) : BaseEntity() {
 
-  /**
-   * Since factory methdods are used, I have to hide setter of the paymentPin. To do this, I can use a backing property.
-   */
-  val paymentPin: PaymentPin
-    get() = paymentPinInternal
-
   companion object {
 
     private const val ORGANIZATION_DOMAIN = "dimigo.hs.kr"
+
+    private const val PIN_TRY_COUNT_LIMIT = 5
 
     fun create(name: UserName, email: String, profileImage: String, googleId: String, organizationDomain: String?): User {
       require(organizationDomain == ORGANIZATION_DOMAIN) { throw OrganizationDomainNotAllowedException() }
@@ -64,19 +60,32 @@ class User private constructor(
    * This is a factory method of the payment pin.
    */
   fun setPaymentPin(raw: String) {
-    if (!paymentPinInternal.isNullObject()) {
+    if (!paymentPin.isNullObject()) {
       throw PaymentPinException.PaymentPinAlreadySetException()
     }
-    paymentPinInternal = PaymentPin.create(raw)
+    paymentPin = PaymentPin.create(raw)
   }
 
   /**
    * This is another factory method of the payment pin.
    */
   fun updatePaymentPin(raw: String) {
-    if (paymentPinInternal.isNullObject()) {
+    if (paymentPin.isNullObject()) {
       throw PaymentPinException.PaymentPinNotSetException()
     }
-    paymentPinInternal = PaymentPin.create(raw)
+    paymentPin = PaymentPin.create(raw)
+  }
+
+  fun verifyPaymentPin(pin: String) {
+    if (pinTryCount >= PIN_TRY_COUNT_LIMIT) {
+      throw PaymentPinException.PaymentPinTryCountLimitException()
+    }
+
+    if (!paymentPin.verify(pin)) {
+      pinTryCount++
+      throw PaymentPinException.InvalidPaymentPinException()
+    }
+
+    pinTryCount = 0
   }
 }
